@@ -27,7 +27,7 @@ const ResidenceSchema = new Schema<IResidence>({
     ref:'sectors',
     required: true
   },
-  residenceRef: { type: 'string', required: true},
+  residenceRef: { type: 'string', default: ""},
   nameRef: { type: 'string', default:""},
   telRef: { type: 'string', default:""},
   maps: { type: 'string', default: ""},

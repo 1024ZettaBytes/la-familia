@@ -1,6 +1,9 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
+import locale from "date-fns/locale/es";
+import DateFnsUtils from "@date-io/date-fns";
+
 import {
   Box,
   Button,
@@ -25,6 +28,7 @@ import {
 import { LoadingButton } from "@mui/lab";
 import { saveCustomer } from "../../../lib/client/customersFetch";
 import { HOW_FOUND_LIST } from "../../../lib/consts/OBJ_CONTS";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 function AddCustomerModal(props) {
   const { handleOnClose, open, citiesList, customerList } = props;
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +39,9 @@ function AddCustomerModal(props) {
   const [wasReferred, setWasReferred] = useState(false);
   const [selectedHowFound, setSelectedHowFound] = useState();
   const [referredBy, setReferredBy] = useState();
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
 
   function handleCitySelection(city) {
     setSelectedCity(city);
@@ -69,6 +76,9 @@ function AddCustomerModal(props) {
       nameRef: event.target.nameRef.value,
       telRef: event.target.telRef.value,
       maps: event.target.maps.value,
+      machineNumber: event.target.machineNumber.value,
+      startDate,
+      endDate
     });
     setIsLoading(false);
     if (!result.error) {
@@ -92,254 +102,302 @@ function AddCustomerModal(props) {
 
   return (
     <Dialog open={open} fullWidth={true} scroll={"body"}>
-      <Card>
-        <CardHeader title="Ingrese datos de nuevo cliente" />
-        <Divider />
-        <CardContent>
-          <Box component="form" onSubmit={submitHandler}>
-            <Grid
-              container
-              direction="column"
-              justifyContent="center"
-              spacing={2}
-              maxWidth="lg"
-            >
-              <Grid item lg={12}>
-                <Typography
-                  variant="h5"
-                  component="h5"
-                  color="secondary"
-                  textAlign="left"
-                  fontWeight="bold"
-                >
-                  Datos personales
-                </Typography>
-              </Grid>
-              <Grid item lg={12}>
-                <TextField
-                  autoComplete="off"
-                  required
-                  id="name"
-                  name="name"
-                  label="Nombre"
-                  fullWidth={true}
-                />
-              </Grid>
-
-              <Grid item lg={12}>
-                <TextField
-                  autoComplete="off"
-                  required
-                  id="cell"
-                  name="cell"
-                  label="Celular"
-                  fullWidth={true}
-                />
-              </Grid>
-              <Grid item lg={12}>
-                <FormLabel id="howFound-radiogroup-label">
-                  ¿Cómo se enteró del servicio?
-                </FormLabel>
-                <RadioGroup
-                  aria-labelledby="howFound-radiogroup-label"
-                  name="howFound"
-                  value={selectedHowFound || ""}
-                  onChange={(e) => handleHowFoundSelection(e.target.value)}
-                  row
-                >
-                  {Object.entries(HOW_FOUND_LIST).map((how) => (
-                    <FormControlLabel
-                      key={how[0]}
-                      value={how[0]}
-                      control={<Radio required={true} />}
-                      label={how[1]}
-                    />
-                  ))}
-                </RadioGroup>
-              </Grid>
-              {wasReferred ? (
+      <LocalizationProvider dateAdapter={DateFnsUtils} adapterLocale={locale}>
+        <Card>
+          <CardHeader title="Ingrese datos de nuevo cliente" />
+          <Divider />
+          <CardContent>
+            <Box component="form" onSubmit={submitHandler}>
+              <Grid
+                container
+                direction="column"
+                justifyContent="center"
+                spacing={2}
+                maxWidth="lg"
+              >
                 <Grid item lg={12}>
-                  <Autocomplete
-                    disablePortal
-                    id="combo-box-demo"
-                    options={customerList.map((customer) => {
-                      return { label: `${customer.name}`, id: customer._id };
-                    })}
-                    onChange={(event: any, newValue: string | null) => {
-                      event.target;
-                      handleReferredBySelection(newValue);
-                    }}
-                    fullWidth
-                    isOptionEqualToValue={(option: any, value: any) =>
-                      option.id === value.id
-                    }
-                    renderInput={(params) => (
-                      <TextField required {...params} label="Recomendado por" />
-                    )}
+                  <Typography
+                    variant="h5"
+                    component="h5"
+                    color="secondary"
+                    textAlign="left"
+                    fontWeight="bold"
+                  >
+                    Datos personales
+                  </Typography>
+                </Grid>
+                <Grid item lg={12}>
+                  <TextField
+                    autoComplete="off"
+                    required
+                    id="name"
+                    name="name"
+                    label="Nombre"
+                    fullWidth={true}
                   />
                 </Grid>
-              ) : null}
-              <Grid item lg={12}>
-                <Typography
-                  variant="h5"
-                  component="h5"
-                  color="secondary"
-                  textAlign="left"
-                  fontWeight="bold"
-                >
-                  Domicilio
-                </Typography>
-              </Grid>
-              <Grid item lg={12}>
-                <TextField
-                  autoComplete="off"
-                  required
-                  id="street"
-                  name="street"
-                  label="Calle y Número"
-                  fullWidth={true}
-                />
-              </Grid>
-              <Grid item lg={12}>
-                <TextField
-                  autoComplete="off"
-                  required
-                  id="suburb"
-                  name="suburb"
-                  label="Colonia"
-                  fullWidth={true}
-                />
-              </Grid>
-              <Grid item lg={12}>
-                <FormControl fullWidth>
-                  <InputLabel id="city-id">Ciudad</InputLabel>
-                  <Select
-                    labelId="city-id"
-                    id="city"
-                    name="city"
-                    label="Ciudad"
-                    required
+
+                <Grid item lg={12}>
+                  <TextField
                     autoComplete="off"
-                    value={selectedCity || ""}
-                    onChange={(event) =>
-                      handleCitySelection(event.target.value)
-                    }
-                  >
-                    {citiesList
-                      ? citiesList.map((city) => (
-                          <MenuItem key={city._id} value={city._id}>
-                            {city.name}
-                          </MenuItem>
-                        ))
-                      : null}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item lg={12}>
-                <FormControl fullWidth>
-                  <InputLabel id="sector-id">Sector</InputLabel>
-                  <Select
-                    labelId="sector-id"
-                    id="sector"
-                    name="sector"
-                    label="Sector"
                     required
-                    autoComplete="off"
-                    value={selectedSector || ""}
-                    disabled={!selectedCity}
-                    onChange={(event) =>
-                      handleSectorSelection(event.target.value)
-                    }
+                    id="cell"
+                    name="cell"
+                    label="Celular"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item lg={12}>
+                  <FormLabel id="howFound-radiogroup-label">
+                    ¿Cómo se enteró del servicio?
+                  </FormLabel>
+                  <RadioGroup
+                    aria-labelledby="howFound-radiogroup-label"
+                    name="howFound"
+                    value={selectedHowFound || ""}
+                    onChange={(e) => handleHowFoundSelection(e.target.value)}
+                    row
                   >
-                    {citiesList && selectedCity
-                      ? citySectors.map((sector) => (
-                          <MenuItem key={sector._id} value={sector._id}>
-                            {sector.name}
-                          </MenuItem>
-                        ))
-                      : null}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item lg={12}>
-                <TextField
-                  autoComplete="off"
-                  required
-                  id="residenceRef"
-                  name="residenceRef"
-                  label="Domicilio Referencia"
-                  fullWidth={true}
-                />
-              </Grid>
-              <Grid item lg={12}>
-                <TextField
-                  autoComplete="off"
-                  id="nameRef"
-                  name="nameRef"
-                  label="Nombre Referencia"
-                  fullWidth={true}
-                />
-              </Grid>
-              <Grid item lg={12}>
-                <TextField
-                  autoComplete="off"
-                  id="telRef"
-                  name="telRef"
-                  label="Teléfono Referencia"
-                  fullWidth={true}
-                />
-              </Grid>
-              <Grid item lg={12}>
-                <TextField
-                  autoComplete="off"
-                  id="maps"
-                  name="maps"
-                  label="Maps"
-                  multiline
-                  maxRows={3}
-                  fullWidth={true}
-                />
-                {hasError.error ? (
-                  <Grid item>
-                    <br />
-                    <Alert severity="error">{hasError?.msg}</Alert>
+                    {Object.entries(HOW_FOUND_LIST).map((how) => (
+                      <FormControlLabel
+                        key={how[0]}
+                        value={how[0]}
+                        control={<Radio required={true} />}
+                        label={how[1]}
+                      />
+                    ))}
+                  </RadioGroup>
+                </Grid>
+                {wasReferred ? (
+                  <Grid item lg={12}>
+                    <Autocomplete
+                      disablePortal
+                      id="combo-box-demo"
+                      options={customerList.map((customer) => {
+                        return { label: `${customer.name}`, id: customer._id };
+                      })}
+                      onChange={(event: any, newValue: string | null) => {
+                        event.target;
+                        handleReferredBySelection(newValue);
+                      }}
+                      fullWidth
+                      isOptionEqualToValue={(option: any, value: any) =>
+                        option.id === value.id
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          required
+                          {...params}
+                          label="Recomendado por"
+                        />
+                      )}
+                    />
                   </Grid>
                 ) : null}
-              </Grid>
-
-              <Grid item lg={12}>
-                <Grid
-                  container
-                  alignItems={"right"}
-                  direction="row"
-                  justifyContent="right"
-                  spacing={2}
-                >
-                  <Grid item>
-                    <Button
-                      size="large"
-                      variant="outlined"
-                      onClick={() => handleClose()}
+                <Grid item lg={12}>
+                  <Typography
+                    variant="h5"
+                    component="h5"
+                    color="secondary"
+                    textAlign="left"
+                    fontWeight="bold"
+                  >
+                    Domicilio
+                  </Typography>
+                </Grid>
+                <Grid item lg={12}>
+                  <TextField
+                    autoComplete="off"
+                    required
+                    id="street"
+                    name="street"
+                    label="Calle y Número"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item lg={12}>
+                  <TextField
+                    autoComplete="off"
+                    required
+                    id="suburb"
+                    name="suburb"
+                    label="Colonia"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item lg={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="city-id">Ciudad</InputLabel>
+                    <Select
+                      labelId="city-id"
+                      id="city"
+                      name="city"
+                      label="Ciudad"
+                      required
+                      autoComplete="off"
+                      value={selectedCity || ""}
+                      onChange={(event) =>
+                        handleCitySelection(event.target.value)
+                      }
                     >
-                      Cancelar
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <LoadingButton
-                      type="submit"
-                      loading={isLoading}
-                      size="large"
-                      variant="contained"
+                      {citiesList
+                        ? citiesList.map((city) => (
+                            <MenuItem key={city._id} value={city._id}>
+                              {city.name}
+                            </MenuItem>
+                          ))
+                        : null}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item lg={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="sector-id">Sector</InputLabel>
+                    <Select
+                      labelId="sector-id"
+                      id="sector"
+                      name="sector"
+                      label="Sector"
+                      required
+                      autoComplete="off"
+                      value={selectedSector || ""}
+                      disabled={!selectedCity}
+                      onChange={(event) =>
+                        handleSectorSelection(event.target.value)
+                      }
                     >
-                      Guardar
-                    </LoadingButton>
+                      {citiesList && selectedCity
+                        ? citySectors.map((sector) => (
+                            <MenuItem key={sector._id} value={sector._id}>
+                              {sector.name}
+                            </MenuItem>
+                          ))
+                        : null}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item lg={12}>
+                  <TextField
+                    autoComplete="off"
+                    id="residenceRef"
+                    name="residenceRef"
+                    label="Domicilio Referencia"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item lg={12}>
+                  <TextField
+                    autoComplete="off"
+                    id="nameRef"
+                    name="nameRef"
+                    label="Nombre Referencia"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item lg={12}>
+                  <TextField
+                    autoComplete="off"
+                    id="telRef"
+                    name="telRef"
+                    label="Teléfono Referencia"
+                    fullWidth={true}
+                  />
+                </Grid>
+                <Grid item lg={12}>
+                  <TextField
+                    autoComplete="off"
+                    id="maps"
+                    name="maps"
+                    label="Maps"
+                    multiline
+                    maxRows={3}
+                    fullWidth={true}
+                  />
+                  {hasError.error ? (
+                    <Grid item>
+                      <br />
+                      <Alert severity="error">{hasError?.msg}</Alert>
+                    </Grid>
+                  ) : null}
+                </Grid>
+                <Grid item lg={12}>
+                  <Typography
+                    variant="h5"
+                    component="h5"
+                    color="secondary"
+                    textAlign="left"
+                    fontWeight="bold"
+                  >
+                    Renta
+                  </Typography>
+                </Grid>
+                <Grid item lg={6}>
+                  <TextField
+                    autoComplete="off"
+                    id="machineNumber"
+                    name="machineNumber"
+                    label="# Equipo"
+                    type="number"
+                    required
+                  />
+                </Grid>
+                <Grid item lg={6}>
+                  <DesktopDatePicker
+                    label="Fecha de Inicio"
+                    inputFormat="dd/MM/yyyy"
+                    value={startDate}
+                    maxDate={new Date()}
+                    onChange={(newValue) => {
+                      setStartDate(newValue);
+                    }}
+                    renderInput={(params) => <TextField {...params} required/>}
+                  />
+                </Grid>
+                <Grid item lg={6}>
+                  <DesktopDatePicker
+                    label="Dia de vencimiento"
+                    inputFormat="dd/MM/yyyy"
+                    value={endDate}
+                    onChange={(newValue) => {
+                      setEndDate(newValue);
+                    }}
+                    renderInput={(params) => <TextField {...params} required />}
+                  />
+                </Grid>
+                <Grid item lg={12}>
+                  <Grid
+                    container
+                    alignItems={"right"}
+                    direction="row"
+                    justifyContent="right"
+                    spacing={2}
+                  >
+                    <Grid item>
+                      <Button
+                        size="large"
+                        variant="outlined"
+                        onClick={() => handleClose()}
+                      >
+                        Cancelar
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <LoadingButton
+                        type="submit"
+                        loading={isLoading}
+                        size="large"
+                        variant="contained"
+                      >
+                        Guardar
+                      </LoadingButton>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        </CardContent>
-      </Card>
+            </Box>
+          </CardContent>
+        </Card>
+      </LocalizationProvider>
     </Dialog>
   );
 }
