@@ -18,7 +18,7 @@ function Footer() {
       >
         <Box>
           <Typography variant="subtitle1">
-            &copy; {new Date().getFullYear()} - Servi Hogar: Soluciones a tu medida.
+            &copy; {new Date().getFullYear()} - Lavadoras "La familia": Unidos para servirte.
           </Typography>
         </Box>
       </Box>
