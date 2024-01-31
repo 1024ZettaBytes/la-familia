@@ -144,11 +144,12 @@ export const dateDiffInWeeks = (initial: Date, end: Date): number => {
 
 export const printElement = async (
   document: Document,
-  filename: string
+  filename: string,
+  elementName: string = null
 ): Promise<void> => {
   return await htmlToImage
-    .toPng(document.getElementById('reportTable'), { quality: 1 })
-    .then(function (dataUrl) {
+  .toPng(document.getElementById(elementName || 'reportTable'), { quality: 1 })
+  .then(function (dataUrl) {
       const pdf = new jsPDF();
       const imgProps = pdf.getImageProperties(dataUrl);
       const pdfWidth = pdf.internal.pageSize.getWidth();
