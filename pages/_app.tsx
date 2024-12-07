@@ -39,7 +39,7 @@ function TokyoApp(props: TokyoAppProps) {
      
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>Lavadoras 'La Familia': Unidos para servirle</title>
+        <title>Servi Hogar: Soluciones a tu medida</title>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"

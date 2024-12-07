@@ -7,12 +7,16 @@ import PageTitleWrapper from "@/components/PageTitleWrapper";
 import { Card, Container, Grid, Skeleton, Alert } from "@mui/material";
 import Footer from "@/components/Footer";
 import ResumenMisEquipos from "./ResumenMisEquipos";
-import { useGetPartnerMachines, useGetPayouts, getFetcher } from "../api/useRequest";
+import {
+  useGetPartnerMachines,
+  useGetPayouts,
+  getFetcher,
+} from "../api/useRequest";
 import NextBreadcrumbs from "@/components/Shared/BreadCrums";
 import TablaMisPagos from "./TablaMisPagos";
 
 function Socios({}) {
-  const paths = ["Inicio", "Socios"];
+  const paths = ["Inicio", "Mi espacio"];
   const { machinesList, machinesListError } = useGetPartnerMachines(getFetcher);
   const { payoutsList, payoutsError } = useGetPayouts(getFetcher);
 
@@ -44,7 +48,10 @@ function Socios({}) {
                 animation="wave"
               />
             ) : (
-                <ResumenMisEquipos machinesList={machinesList} />
+              <ResumenMisEquipos
+                title="Mis equipos"
+                machinesList={machinesList.list}
+              />
             )}
           </Grid>
           <Grid item xs={12}>

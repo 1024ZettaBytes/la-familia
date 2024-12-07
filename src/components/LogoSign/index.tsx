@@ -53,7 +53,7 @@ function Logo() {
           <LogoSignWrapper>
           <img
           className={classes.logoimg}
-              src="/static/images/la_familia.png"
+              src="/static/images/servi_hogar.png"
             />
           </LogoSignWrapper>
         </Badge>

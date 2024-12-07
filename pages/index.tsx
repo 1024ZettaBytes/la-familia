@@ -16,7 +16,7 @@ function Home({session}) {
   return (
     <>
       <Head>
-        <title>La Familia</title>
+        <title>Servi Hogar</title>
       </Head>
       <PageTitleWrapper>
       <PageHeader title={"¡Bienvenido(a) "+user?.name+"!"} sutitle={"Esta es la página de inicio"} showAvatar={true}/>

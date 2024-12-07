@@ -18,7 +18,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import ListIcon from "@mui/icons-material/List";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-//import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import HailIcon from "@mui/icons-material/Hail";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -27,6 +27,8 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import GroupIcon from "@mui/icons-material/Group";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import HandshakeIcon from "@mui/icons-material/Handshake";
+import BuildIcon from '@mui/icons-material/Build';
+
 const MenuWrapper = styled(Box)(
   ({ theme }) => `
   .MuiList-root {
@@ -395,6 +397,39 @@ function SidebarMenu({ userRole }) {
             </List>
           </>
         )}
+        {
+          ["ADMIN", "ING"].includes(userRole) && 
+          <List
+          component="div"
+          subheader={
+            <ListSubheader component="div" disableSticky>
+              BODEGA
+            </ListSubheader>
+          }
+        >
+          <SubMenuWrapper>
+            <List component="div">
+              <ListItem component="div">
+                <NextLink href="/mantenimientos" passHref>
+                  <Button
+                    className={
+                      currentRoute.includes("/mantenimientos")
+                        ? "active"
+                        : ""
+                    }
+                    disableRipple
+                    component="a"
+                    onClick={closeSidebar}
+                    startIcon={<BuildIcon />}
+                  >
+                    Mantenimientos
+                  </Button>
+                </NextLink>
+              </ListItem>
+            </List>
+          </SubMenuWrapper>
+        </List>
+        }
         {/*<List
           component="div"
           subheader={
@@ -545,6 +580,21 @@ function SidebarMenu({ userRole }) {
                         startIcon={<HandshakeIcon />}
                       >
                         Socios
+                      </Button>
+                    </NextLink>
+                  </ListItem>
+                )}
+                {userRole === "ADMIN" && (
+                  <ListItem component="div">
+                    <NextLink href="/inventario" passHref>
+                      <Button
+                        className={currentRoute === "/inventario" ? "active" : ""}
+                        disableRipple
+                        component="a"
+                        onClick={closeSidebar}
+                        startIcon={<InventoryIcon />}
+                      >
+                        Inventario
                       </Button>
                     </NextLink>
                   </ListItem>

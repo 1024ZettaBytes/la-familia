@@ -59,7 +59,6 @@ function Sidebar({userRole}) {
               mx={2}
               sx={{
                 width: "100%",
-                marginBottom: "80px"
               }}
             >
               <Logo />

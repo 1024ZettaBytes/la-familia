@@ -58,7 +58,7 @@ function LoginForm() {
           <Grid item xs={8} lg={4} className={classes.logoContainer}>
             <img
               className={classes.loginLogo}
-              src="/static/images/la_familia.png"
+              src="/static/images/servi_hogar.png"
             />
           </Grid>
           <Grid item xs={2} lg={4}></Grid>

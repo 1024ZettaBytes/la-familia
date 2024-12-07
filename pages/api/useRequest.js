@@ -6,6 +6,12 @@ const noRefreshOptions = {
   revalidateOnFocus: false,
   revalidateOnReconnect: true
 };
+function getPaginatedUrl(url, limit, page, searchTerm) {
+  return (
+    `${url}?limit=${limit}&page=${page}` +
+    (searchTerm && searchTerm.trim() !== '' ? `&searchTerm=${searchTerm}` : '')
+  );
+}
 export const refreshData = async (apiUrl) => {
   await mutate(apiUrl);
 };
@@ -32,8 +38,11 @@ export const getFetcher = async (url) => {
   return res.json();
 };
 // Customers
-export const useGetAllCustomers = (fetcher) => {
-  const { data, error } = useSWR(ROUTES.ALL_CUSTOMERS_API, fetcher);
+export const useGetAllCustomers = (fetcher, detailed = true) => {
+  const { data, error } = useSWR(
+    ROUTES.ALL_CUSTOMERS_API + (!detailed ? '?noDetail=true' : ''),
+    fetcher
+  );
   return { customerList: data?.data, customerError: error };
 };
 
@@ -123,8 +132,11 @@ export const useGetPendingDeliveries = (fetcher) => {
   const { data, error } = useSWR(ROUTES.ALL_PENDING_DELIVERIES_API, fetcher);
   return { pendingDeliveriesList: data?.data, pendingDeliveriesError: error };
 };
-export const useGetDeliveries = (fetcher) => {
-  const { data, error } = useSWR(ROUTES.ALL_DELIVERIES_API, fetcher);
+export const useGetDeliveries = (fetcher, limit, page, searchTerm = null) => {
+  const { data, error } = useSWR(
+    getPaginatedUrl(ROUTES.ALL_DELIVERIES_API, limit, page, searchTerm),
+    fetcher
+  );
   return { deliveriesList: data?.data, deliveriesError: error };
 };
 export const useGetDeliveryById = (fetcher, id) => {
@@ -140,9 +152,12 @@ export const useGetPendingPickups = (fetcher) => {
   const { data, error } = useSWR(ROUTES.ALL_PENDING_PICKUPS_API, fetcher);
   return { pendingPickupsList: data?.data, pendingPickupsError: error };
 };
-export const useGetPickups = (fetcher) => {
-  const { data, error } = useSWR(ROUTES.ALL_PICKUP_API, fetcher);
-  return { pickupsList: data?.data, pickupsError: error };
+export const useGetPickups = (fetcher, limit, page, searchTerm = null) => {
+  const { data, error } = useSWR(
+    getPaginatedUrl(ROUTES.ALL_PICKUP_API, limit, page, searchTerm),
+    fetcher
+  );
+  return { pickups: data?.data, pickupsError: error };
 };
 export const useGetPickupById = (fetcher, id) => {
   const { data, error } = useSWR(
@@ -157,9 +172,13 @@ export const useGetPendingChanges = (fetcher) => {
   const { data, error } = useSWR(ROUTES.ALL_PENDING_CHANGES_API, fetcher);
   return { pendingChangesList: data?.data, pendingChangesError: error };
 };
-export const useGetChanges = (fetcher) => {
-  const { data, error } = useSWR(ROUTES.ALL_CHANGES_API, fetcher);
-  return { changesList: data?.data, changesError: error };
+
+export const useGetChanges = (fetcher, limit, page, searchTerm = null) => {
+  const { data, error } = useSWR(
+    getPaginatedUrl(ROUTES.ALL_CHANGES_API, limit, page, searchTerm),
+    fetcher
+  );
+  return { changes: data?.data, changesError: error };
 };
 export const useGetChangeById = (fetcher, id) => {
   const { data, error } = useSWR(
@@ -170,9 +189,12 @@ export const useGetChangeById = (fetcher, id) => {
 };
 
 // Payments
-export const useGetPayments = (fetcher) => {
-  const { data, error } = useSWR(ROUTES.ALL_PAYMENTS_API, fetcher);
-  return { paymentsList: data?.data, paymentsError: error };
+export const useGetPayments = (fetcher, limit, page, searchTerm = null) => {
+  const { data, error } = useSWR(
+    getPaginatedUrl(ROUTES.ALL_PAYMENTS_API, limit, page, searchTerm),
+    fetcher
+  );
+  return { payments: data?.data, paymentsError: error };
 };
 
 // Reports
@@ -224,9 +246,9 @@ export const useGetPartners = (fetcher, detailed = false) => {
   return { partnersList: data?.data, partnersError: error };
 };
 
-export const useGetPartnerMachines = (fetcher) => {
+export const useGetPartnerMachines = (fetcher, partnerId = null) => {
   const { data, error } = useSWR(
-    ROUTES.PARTNER_MACHINES,
+    ROUTES.PARTNER_MACHINES + (partnerId ? '?partner=' + partnerId : ''),
     fetcher,
     noRefreshOptions
   );
@@ -234,7 +256,39 @@ export const useGetPartnerMachines = (fetcher) => {
 };
 
 // Partners
-export const useGetPayouts = (fetcher) => {
-  const { data, error } = useSWR(ROUTES.ALL_PAYOUTS, fetcher, noRefreshOptions);
+export const useGetPayouts = (fetcher, partnerId = null) => {
+  const { data, error } = useSWR(
+    ROUTES.ALL_PAYOUTS + (partnerId ? '?partner=' + partnerId : ''),
+    fetcher,
+    noRefreshOptions
+  );
   return { payoutsList: data?.data, payoutsError: error };
+};
+// Inventory
+export const useGetProducts = (fetcher, term = null, detailed = true) => {
+  const hasTerm = term && term.trim().length > 0;
+  const detChar = hasTerm ? '&' : '?';
+  const { data, error, isLoading } = useSWR(
+    ROUTES.ALL_PRODUCTS +
+      (hasTerm ? '?term=' + term : '') +
+      (detailed ? `${detChar}detailed=true` : ''),
+    fetcher
+  );
+  return {
+    productsList: data?.data,
+    productsError: error,
+    isLoadingProducts: isLoading
+  };
+};
+
+export const useGetProductEntries = (fetcher) => {
+  const { data, error, isLoading } = useSWR(
+    ROUTES.ALL_PRODUCTS_ENTRIES,
+    fetcher
+  );
+  return {
+    entriesList: data?.data,
+    entriesError: error,
+    isLoadingEntries: isLoading
+  };
 };
