@@ -56,7 +56,7 @@ function Reportes({ session }) {
   return (
     <>
       <Head>
-        <title>Servi Hogar | Reportes</title>
+        <title>La Familia | Reportes</title>
       </Head>
       <PageTitleWrapper>
         <PageHeader title={"Reportes"} />

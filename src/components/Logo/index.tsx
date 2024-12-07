@@ -118,7 +118,7 @@ function Logo() {
           <Tooltip title="Version 1.0" arrow placement="right">
             <VersionBadge>1.0</VersionBadge>
           </Tooltip>
-          <LogoText>Servi Hogar: Soluciones a tu medida</LogoText>
+          <LogoText>La Familia: Soluciones a tu medida</LogoText>
         </LogoTextWrapper>
       </Box>
     </LogoWrapper>
