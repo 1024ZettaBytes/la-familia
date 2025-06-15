@@ -196,6 +196,8 @@ function DayReport() {
                         colorStyle={paymentStyle}
                         totalData={reportData.payments.totalData}
                         list={reportData.payments.days}
+                        secondList={reportData.cashPayments?.days}
+                        totalSecondList={reportData.cashPayments?.totalData}
                       />
                     </Grid>
                     <Grid item lg={6}>

@@ -19,6 +19,8 @@ interface RegistersReportTableProps {
   header: string;
   colorStyle: object;
   list: any[];
+  secondList?: any[];
+  totalSecondList?: any;
   totalData: any;
 }
 const cellStyle = { border: "2px solid #374246" };
@@ -26,6 +28,8 @@ const RegistersReportTable: React.FC<RegistersReportTableProps> = ({
   header,
   colorStyle,
   list,
+  secondList = null,
+  totalSecondList = 0,
   totalData,
 }) => {
   return (
@@ -35,7 +39,11 @@ const RegistersReportTable: React.FC<RegistersReportTableProps> = ({
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell align="center" style={colorStyle} colSpan={3}>
+              <TableCell
+                align="center"
+                style={colorStyle}
+                colSpan={secondList ? 4 : 3}
+              >
                 {header}
               </TableCell>
             </TableRow>
@@ -51,8 +59,13 @@ const RegistersReportTable: React.FC<RegistersReportTableProps> = ({
               <TableCell align="center" style={colorStyle}>
                 Registro
               </TableCell>
+              {secondList && (
+                <TableCell align="center" style={colorStyle}>
+                  EFECTIVO
+                </TableCell>
+              )}
             </TableRow>
-            {list?.map((day) => (
+            {list?.map((day, index) => (
               <TableRow key={`${header}-${day?.weekDay}`}>
                 <TableCell align="center" style={cellStyle}>
                   <Typography
@@ -62,7 +75,7 @@ const RegistersReportTable: React.FC<RegistersReportTableProps> = ({
                     gutterBottom
                     noWrap
                   >
-                    {format(new Date(day?.date),"dd/MM/yyyy", { locale: es})}
+                    {format(new Date(day?.date), "dd/MM/yyyy", { locale: es })}
                   </Typography>
                 </TableCell>
                 <TableCell align="center" style={cellStyle}>
@@ -85,6 +98,18 @@ const RegistersReportTable: React.FC<RegistersReportTableProps> = ({
                     {day?.done}
                   </Typography>
                 </TableCell>
+                {secondList && (
+                  <TableCell align="center" style={cellStyle}>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {secondList[index]?.done}
+                    </Typography>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
 
@@ -100,6 +125,13 @@ const RegistersReportTable: React.FC<RegistersReportTableProps> = ({
                   {totalData?.done}
                 </Typography>
               </TableCell>
+              {secondList && (
+                <TableCell align="center" style={colorStyle}>
+                  <Typography variant="h5" gutterBottom noWrap>
+                    {totalSecondList?.done}
+                  </Typography>
+                </TableCell>
+              )}
             </TableRow>
           </TableBody>
         </Table>
